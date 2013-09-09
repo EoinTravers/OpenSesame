@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with openexp.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from libopensesame.exceptions import form_error
 from libopensesame import debug
 from widget import widget
 
@@ -24,41 +25,48 @@ class rating_scale(widget):
 
 	"""A simple rating scale/ Likert widget"""
 
-	def __init__(self, form, nodes=5, click_accepts=False, var=None):
+	def __init__(self, form, nodes=5, click_accepts=False, var=None, default=None):
 	
 		"""<DOC>
 		Constructor.
 		
 		Arguments:
-		form -- The parent form.
+		form			--	The parent form.
 		
 		Keyword arguments:
-		nodes -- The number of nodes or a list of node identifiers (e.g., #
-				 ['yes', 'no', 'maybe']. If a list is passed the rating scale #
-				 will have labels, otherwise it will just have boxes #
-				 (default=5).
-		click_accepts -- Indicates whether the form should close when a value #
-						 is selected (default=False).
-		var -- The name of the experimental variable that should be used to log #
-			   the widget status (default=None).
+		nodes			--	The number of nodes or a list of node identifiers (e.g., #
+							['yes', 'no', 'maybe']. If a list is passed the rating scale #
+							will have labels, otherwise it will just have boxes #
+							(default=5).
+		click_accepts	--	Indicates whether the form should close when a value #
+							is selected (default=False).
+		var				--	The name of the experimental variable that should be used to log #
+							the widget status. The value that is logged is the number of #
+							the node that was selected, with the first node being 0. If no #
+							nodes were selected, the value is 'None'. For more information #
+							about the use of response variables in forms, see the form #
+							documentation page.(default=None).
+		default			--	The node that is selected by default, or None to #
+							select no node. The value corresponds to the node #
+							number, where 0 is the first node. (default=None)s
 		</DOC>"""	
 		
 		if type(click_accepts) != bool:
-			click_accepts = click_accepts == 'yes'					
+			click_accepts = click_accepts == u'yes'
 		
 		widget.__init__(self, form)
-		self.type = 'rating_scale'
+		self.type = u'rating_scale'
 		self.box_size = 16
 		self.click_accepts = click_accepts
 		self.pos_list = []
 		self.var = var
 		if type(nodes) == int:
-			self.nodes = ['']*nodes
-		elif type(nodes) in (str, unicode):
-			self.nodes = nodes.split(';')
+			self.nodes = [u'']*nodes
+		elif isinstance(nodes, basestring):
+			self.nodes = nodes.split(u';')
 		else:
 			self.nodes = nodes
-		self.set_value(None)
+		self.set_value(default)
 			
 	def on_mouse_click(self, pos):
 	
@@ -77,8 +85,8 @@ class rating_scale(widget):
 			if x >= _x and x <= _x+self.box_size and y >= _y and y <= \
 				_y+self.box_size:
 				self.set_value(i)
-				if self.click_accepts:												
-					return i			
+				if self.click_accepts:
+					return i	
 				break
 			i += 1
 		
@@ -94,7 +102,7 @@ class rating_scale(widget):
 		cy = y+h/2
 		_h = self.form.theme_engine.box_size()				
 		dx = (1*w-3*_h)/(len(self.nodes)-1)										
-		self.form.theme_engine.frame(x, cy-.5*_h, w, 2*_h, style='light')		
+		self.form.theme_engine.frame(x, cy-.5*_h, w, 2*_h, style=u'light')		
 		_x = x+_h
 		i = 0
 		for node in self.nodes:
@@ -115,5 +123,8 @@ class rating_scale(widget):
 		val -- The value.
 		</DOC>"""
 		
+		if val != None and (val >= len(self.nodes) or val < 0):
+			raise form_error(u'Trying to select a non-existing node (%s). Did you specify an incorrect default value?' \
+				% val)
 		self.value = val
 		self.set_var(val)

@@ -27,7 +27,7 @@ import subprocess
 import os
 import os.path
 import tempfile
-from libopensesame import debug, html
+from libopensesame import debug, html, misc
 
 # Translation mapping from envelope names
 env_synonyms = {}
@@ -204,8 +204,15 @@ class legacy:
 		"""
 
 		if self._current_font == None:
-			self._current_font = pygame.font.Font(self.experiment.resource( \
-				"%s.ttf" % self.font_style), self.font_size)
+			# First see if the font refers to a file in the resources/ filepool
+			try:
+				font_path = self.experiment.resource(u'%s.ttf' % \
+					self.font_style)
+				self._current_font = pygame.font.Font(font_path, self.font_size)
+			# If not, try to match a system font
+			except:
+				self._current_font = pygame.font.SysFont(self.font_style, \
+					self.font_size)				
 			self._current_font.set_bold(self.font_bold)
 			self._current_font.set_italic(self.font_italic)
 			self._current_font.set_underline(self.font_underline)
@@ -558,16 +565,14 @@ class legacy:
 		>>> my_canvas.line(0, 0, w, h, arrow_size=10)
 		</DOC>"""
 
-		if color != None: color = self.color(color)
-		else: color = self.fgcolor
-		self.line(sx, sy, ex, ey)
+		self.line(sx, sy, ex, ey, color=color)
 		a = math.atan2(ey - sy, ex - sx)
 		_sx = ex + arrow_size * math.cos(a + math.radians(135))
 		_sy = ey + arrow_size * math.sin(a + math.radians(135))
-		self.line(_sx, _sy, ex, ey)
+		self.line(_sx, _sy, ex, ey, color=color)
 		_sx = ex + arrow_size * math.cos(a + math.radians(225))
 		_sy = ey + arrow_size * math.sin(a + math.radians(225))
-		self.line(_sx, _sy, ex, ey)
+		self.line(_sx, _sy, ex, ey, color=color)
 
 	def rect(self, x, y, w, h, fill=False, color=None):
 
@@ -736,6 +741,7 @@ class legacy:
 		else: color = self.fgcolor
 		if x == None: x = self.xcenter()
 		if y == None: y = self.ycenter()
+		self.html.reset()
 		self.html.render(text, x, y, self, max_width=max_width, center=center, \
 			color=color, html=html)
 
@@ -789,35 +795,38 @@ class legacy:
 	def image(self, fname, center=True, x=None, y=None, scale=None):
 
 		"""<DOC>
-		Draws an image from file. This function does not look in the file pool, #
-		but takes an absolute path.
+		Draws an image from file. This function does not look in the file #
+		pool, but takes an absolute path.
 
 		Arguments:
-		fname -- The path of the file.
+		fname		--	The path of the file. If this is a Unicode string, it #
+						is intepreted as utf-8 encoding.
 
 		Keyword arguments:
-		center -- A Boolean indicating whether the given coordinates reflect the #
-				  center (True) or the top-left (False) of the image #
-				  (default=True).
-		x -- The X coordinate. None = center. (Default=None)
-		y -- The Y coordinate. None = center. (Default=None)
-		scale -- The scaling factor of the image. 1.0 or None = no scaling, 2.0 #
-				 = twice as large, etc. (default=None).
+		center		--	A Boolean indicating whether the given coordinates #
+						reflect the center (True) or the top-left (False) of #
+						the image default=True).
+		x			--	The X coordinate. None = center. (Default=None)
+		y			--	The Y coordinate. None = center. (Default=None)
+		scale		--	The scaling factor of the image. 1.0 or None = #
+						no scaling, 2.0 = twice as large, etc. (default=None).
 
 		Example:
 		>>> from openexp.canvas import canvas
 		>>> my_canvas = canvas(exp)
 		>>> # Determine the absolute path:
-		>>> path = exp.get_file('image_in_pool.png')
+		>>> path = exp.get_file(u'image_in_pool.png')
 		>>> my_canvas.image(path)
 		</DOC>"""
 
+		if isinstance(fname, unicode):
+			fname = fname.encode(self.experiment.encoding)
 		try:
 			surface = pygame.image.load(fname)
 		except pygame.error as e:
 			raise openexp.exceptions.canvas_error( \
 				"'%s' is not a supported image format" % fname)
-
+				
 		if scale != None:
 			try:
 				surface = pygame.transform.smoothscale(surface, \
