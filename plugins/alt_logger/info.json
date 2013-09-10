@@ -1,0 +1,23 @@
+{
+	"version"	: 0.1,
+	"author"	: "Eoin Travers/Sebastiaan Mathôt",
+	"url"		: "http://osdoc.cogsci.nl/",
+	"category"	: "Mobile",
+	"date"		: "2013",
+	"controls" : [
+		{
+			"type"		: "checkbox",
+			"var"		: "_log_all",
+			"label"		: "Log all variables (doesn't work yet)",
+			"name"		: "checkbox_log_all",
+			"tooltip"	: "Log all variables"
+		},
+		{
+			"type"		: "line_edit",
+			"var"		: "_vars_string",
+			"label"		: "Variables to log (seperated by commas)",
+			"name"		: "line_vars_string",
+			"tooltip"	: "Enter the variables you wish to log, seperated by commas"
+		}
+	]
+}
