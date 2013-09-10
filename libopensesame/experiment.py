@@ -96,6 +96,8 @@ class experiment(item.item):
 		# Logfile parameters
 		self._log = None
 		self.logfile = None
+		# Alternative, Pythonic logging 
+		self.log_list = []
 
 		# This is a dummy variable for backwards compatibility. The logfile
 		# encoding is always utf-8, and this variable doesn't do anything.
