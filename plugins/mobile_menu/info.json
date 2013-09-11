@@ -1,0 +1,44 @@
+{
+	"version"	: 0.1,
+	"author"	: "Eoin Travers/Sebastiaan Mathôt",
+	"url"		: "http://osdoc.cogsci.nl/",
+	"category"	: "Mobile",
+	"date"		: "2013",
+	"controls" : [
+		{
+			"type"		: "checkbox",
+			"var"		: "_checkbox",
+			"label"		: "Implement me!",
+			"name"		: "checkbox_widget",
+			"tooltip"	: "An example checkbox"
+		},
+		{
+			"type"		: "line_edit",
+			"var"		: "_variable",
+			"label"		: "Response variable:",
+			"name"		: "line_edit_variable",
+			"tooltip"	: "The variable you wish the response to be saved as"
+		},
+		{
+			"type"		: "line_edit",
+			"var"		: "_question",
+			"label"		: "Question:",
+			"name"		: "line_edit_question",
+			"tooltip"	: "The the question you wish to preset"
+		},
+		{
+			"type"		: "line_edit",
+			"var"		: "_resp1",
+			"label"		: "Response 1:",
+			"name"		: "line_edit_resp1",
+			"tooltip"	: "Enter response option"
+		},
+		{
+			"type"		: "line_edit",
+			"var"		: "_resp2",
+			"label"		: "Response 2:",
+			"name"		: "line_edit_resp2",
+			"tooltip"	: "Enter response option"
+		}
+	]
+}
