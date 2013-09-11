@@ -33,7 +33,7 @@ class mobile_menu(item):
 	"""
 
 	# Provide an informative description for your plug-in.
-	description = u'An example new-style plug-in'
+	description = u'Simple plug-in for multiple choice on touchscreens.'
 
 	def __init__(self, name, experiment, script=None):
 
