@@ -52,7 +52,7 @@ class send_to_server(item):
 		# in info.json. If you do not provide default values, the plug-in will
 		# work, but the variables will be undefined when they are not explicitly
 		# set in the GUI.
-		self._checkbox = u'no' # yes = checked, no = unchecked
+		self._delete = u'yes' # yes = checked, no = unchecked
 		#self._color = u'white'
 		self._address = u''
 		# Then call the parent constructor
@@ -66,26 +66,28 @@ class send_to_server(item):
 		item.prepare(self)
 		# Here simply prepare a canvas with a fixatio dot.
 		self.c = canvas(self.experiment)
+		self.m = mouse(self.experiment)
 		self.c.text('Hello world')
 		debug.msg('Prepared')
 		
-	def send_data(self, custom_data = None, address = 'http://cogsci.nl/etravers/androidsql.php',  delete=False):
-		if custom_data:
-			data = custom_data
-		else:
-			data = self.experiment.log_list
+	def run(self):#, custom_data = None, address = 'http://cogsci.nl/etravers/androidsql.php',  delete=False):
+		#~ if custom_data:
+			#~ data = custom_data
+		#~ else:
+			#~ data = self.experiment.log_list
+		data = self.experiment.log_list
 		self.c.clear()
 		self.c.text('Connecting to server...')
 		self.c.show()
 		
 		# Try to open the connection
 		#address = 'http://cogsci.nl/etravers/androidsql.php'
-		
+		address = self._address
 		try:
-			page = urllib.urlopen(address, 'position=OopeningConnection')
+			page = urllib.urlopen(address)#, data='position=OpeningConnection')
 			page.close()
 			# Connection works. Send data.
-			print 'Connected'
+			debug.msg('Connection to server  at %s succesful...' % address)
 			t = 0
 			for trial in data:
 				progress = int(float(t)/len(data)*680)
@@ -96,8 +98,9 @@ class send_to_server(item):
 				self.c.rect(303, 601, progress, 70, True, 'red')
 				self.c.show()
 				encode_data = urllib.urlencode(trial)
-				print encode_data
+				debug.msg(encode_data)
 				for i in range(5):
+					# Try to send data 5 times.
 					try:
 						page = urllib.urlopen(address, encode_data)
 						page.close()
@@ -108,44 +111,21 @@ class send_to_server(item):
 						break
 				t += 1
 			result = 'Data sent!'
+			
 			# Delete sent datafile
-			if delete:
-				if os.path.isfile(data_path):
-					os.remove(data_path)
+			#~ if delete:
+				#~ if os.path.isfile(data_path):
+					#~ os.remove(data_path)
 		except IOError as e:
 			result = 'Unable to connect.\nPlease try again when connected to the internet.'
-			save_data()
+			#save_data()
 			print str(e)
+		debug.msg(result)
 		self.c.clear()
 		self.c.text(result)
+		self.c.text('Tap to continue.', y = 500)
 		self.c.show()
-		self.sleep(1000)
-		
-	def save_data(self):
-		data_log = self.experiment.log_list
-		sdcard_folders = ['/sdcard/', '/mnt/sdcard/']
-		for path in sdcard_folders:
-			if os.path.isdir(path):
-				break
-		try:
-			f = open(os.path.join(path, 'datafile.txt'), 'w')
-		except:
-			print 'Failed to create %s' % path
-			f = open('datafile.txt', 'w')
-		f.truncate()
-		f.write( 'data_log = ' + repr(data_log)+'\n')
-		f.close()
-		
-
-	def run(self):
-
-		"""The run phase of the plug-in goes here."""
-
-		# self.set_item_onset() sets the time_[item name] variable. Optionally,
-		# you can pass a timestamp, such as returned by canvas.show().
-		self.set_item_onset(self.c.show())
-		data_log = self.experiment.log_list
-		self.send_data()
+		self.m.get_click()
 		
 class qtsend_to_server(send_to_server, qtautoplugin):
 	
@@ -195,23 +175,3 @@ class qtsend_to_server(send_to_server, qtautoplugin):
 		pass
 
 
-
-
-#-*- coding:utf-8 -*-
-
-"""
-This file is part of OpenSesame.
-
-OpenSesame is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-OpenSesame is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with OpenSesame.  If not, see <http://www.gnu.org/licenses/>.
-"""
