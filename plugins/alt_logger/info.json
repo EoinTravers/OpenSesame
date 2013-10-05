@@ -7,8 +7,8 @@
 	"controls" : [
 		{
 			"type"		: "checkbox",
-			"var"		: "_log_all",
-			"label"		: "Log all variables (doesn't work yet)",
+			"var"		: "auto_log",
+			"label"		: "Log all variables",
 			"name"		: "checkbox_log_all",
 			"tooltip"	: "Log all variables"
 		},

@@ -23,6 +23,7 @@ from libqtopensesame.items import qtitem
 from openexp.canvas import canvas
 from PyQt4 import QtCore, QtGui
 from libqtopensesame.misc import _
+from libopensesame import exceptions, debug
 
 class alt_logger(item):
 
@@ -51,9 +52,10 @@ class alt_logger(item):
 		# in info.json. If you do not provide default values, the plug-in will
 		# work, but the variables will be undefined when they are not explicitly
 		# set in the GUI.
-		self._log_all = u'yes' # yes = checked, no = unchecked
+		#self._log_all = u'yes' # yes = checked, no = unchecked
 		self._vars_string = u''
 		self.ignore_missing = u'yes'
+		self.auto_log = u'yes'
 		self.logvars = []
 		# Then call the parent constructor
 		item.__init__(self, name, experiment, script)
@@ -61,10 +63,31 @@ class alt_logger(item):
 	def run(self):
 
 		"""The run phase of the plug-in goes here."""
-		self.logvars = self._vars_string.strip(' ').split(',')
+		if self.get(u'auto_log') == u'yes':
+			# Log everything
+			self.logvars = []
+			for logvar, val, item in self.experiment.var_list():
+				if (self.has(logvar) or self.get(u'ignore_missing') == u'yes') and logvar not in self.logvars:
+					self.logvars.append(logvar)
+					debug.msg(u'auto-logging "%s"' % logvar)
+		else:
+			# Parse variable to log from user input (stopgap function, until
+			# proper UI can be used.
+			self.logvars = self._vars_string.strip(' ').split(',')
+			
 		trial_data = dict()
-		for v in self.logvars:
-			trial_data[v] = self.experiment.get(v)
+		for var in self.logvars:
+			try:
+				val = self.experiment.get(var)
+			except exceptions.runtime_error as e:
+				if self.get(u'ignore_missing') == u'yes':
+					val = u'NA'
+				else:
+					raise exceptions.runtime_error( \
+						u"Logger '%s' tries to log the variable '%s', but this variable is not available. Please deselect '%s' in logger '%s' or enable the 'Use NA for variables that have not been set' option." \
+						% (self.name, var, var, self.name))
+			trial_data[var] = val
+
 		self.experiment.log_list.append(trial_data)
 			
 
