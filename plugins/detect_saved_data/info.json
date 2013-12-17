@@ -1,0 +1,21 @@
+{
+	"author"	: "Eoin Travers",
+	"url"		: "http://osdoc.cogsci.nl/",
+	"category"	: "Mobile",
+	"comment"	: "Currently send all data in self.experiment.log_list to the url given. Needs to be modified to allow for sending data from any list.",
+	"controls" : [
+		{
+			"type"		: "line_edit",
+			"var"		: "_address",
+			"label"		: "Server url",
+			"tooltip"	: "The URL of the server which will save the data"
+		},
+		{
+			"type"		: "checkbox",
+			"var"		: "_delete",
+			"label"		: "Delete stored data",
+			"name"		: "checkbox_widget",
+			"tooltip"	: "Delete stored data?"
+		}
+	]
+}

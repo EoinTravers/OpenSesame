@@ -27,6 +27,13 @@
 			"tooltip"	: "The the question you wish to preset"
 		},
 		{
+			"type"		: "editor",
+			"var"		: "_responses",
+			"label"		: "Responses (one on each line):",
+			"name"		: "editor_responses",
+			"tooltip"	: "Enter response options"
+		},
+		{
 			"type"		: "line_edit",
 			"var"		: "_resp1",
 			"label"		: "Response 1:",

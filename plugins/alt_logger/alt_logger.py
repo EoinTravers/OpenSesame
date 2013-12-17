@@ -73,7 +73,7 @@ class alt_logger(item):
 		else:
 			# Parse variable to log from user input (stopgap function, until
 			# proper UI can be used.
-			self.logvars = self._vars_string.strip(' ').split(',')
+			self.logvars = self._vars_string.strip(' ').split('\n')
 			
 		trial_data = dict()
 		for var in self.logvars:

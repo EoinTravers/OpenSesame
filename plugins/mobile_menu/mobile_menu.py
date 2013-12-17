@@ -51,6 +51,7 @@ class mobile_menu(item):
 		self._question = u'Your question?'
 		self._resp1 = u'Response 1'
 		self._resp2 = u'Response 2'
+		self._responses = u'Response 1\nResponse2'
 		self._variable = u'menu_choice'
 		# Then call the parent constructor
 		item.__init__(self, name, experiment, script)
@@ -58,20 +59,22 @@ class mobile_menu(item):
 	def prepare(self):
 
 		"""The preparation phase of the plug-in goes here."""
-
+		self.responses = self._responses.split('\n')
+		while self.responses.count('') > 0:
+			self.responses.remove('')
+		self.rows = [2] + [1]*len(self.responses)
 		pass
 
 	def run(self):
 
 		"""The run phase of the plug-in goes here."""
-
-		form = widgets.form(self.experiment, cols=[1,5,1], rows=[3,1,1],margins=[32,32,32,32])
+		form = widgets.form(self.experiment, cols=[1,5,1], rows=self.rows, margins=[32,32,32,32])
 		label_title = widgets.label(form, text=self._question)
 		form.set_widget(label_title, (0,0), colspan=3)
-		button1 = widgets.button(form, text=self._resp1)
-		form.set_widget(button1, (1,1))
-		button2 = widgets.button(form, text=self._resp2)
-		form.set_widget(button2, (1,2))
+		for i in range(len(self.responses)):
+			resp = self.responses[i]
+			button = widgets.button(form, text=resp)
+			form.set_widget(button, (1, i+1))
 		button_clicked = form._exec()
 		self.experiment.set(self._variable, button_clicked)		
 

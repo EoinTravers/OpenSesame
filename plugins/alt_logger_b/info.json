@@ -7,15 +7,15 @@
 	"controls" : [
 		{
 			"type"		: "checkbox",
-			"var"		: "auto_log",
-			"label"		: "Log all variables",
+			"var"		: "_log_all",
+			"label"		: "Log all variables (doesn't work yet)",
 			"name"		: "checkbox_log_all",
 			"tooltip"	: "Log all variables"
 		},
 		{
-			"type"		: "editor",
+			"type"		: "line_edit",
 			"var"		: "_vars_string",
-			"label"		: "Variables to log (one per line)",
+			"label"		: "Variables to log (seperated by commas)",
 			"name"		: "line_vars_string",
 			"tooltip"	: "Enter the variables you wish to log, seperated by commas"
 		}
