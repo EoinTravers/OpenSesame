@@ -18,7 +18,7 @@ along with openexp.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from libqtopensesame.misc import _
-from libopensesame.exceptions import form_error
+from libopensesame.exceptions import osexception
 from button import button
 
 class checkbox(button):
@@ -58,8 +58,8 @@ class checkbox(button):
 		
 		if isinstance(checked, basestring):
 			checked = checked == u'yes'
-		if isinstance(click_accepts, bool):
-			click_accepts = click_accepts == u'yes'			
+		if isinstance(click_accepts, basestring):
+			click_accepts = click_accepts == u'yes'
 		button.__init__(self, form, text, frame=frame, center=False)
 		self.type = u'checkbox'
 		self.group = group		
@@ -78,7 +78,7 @@ class checkbox(button):
 		
 		Arguments:
 		pos		--	An (x, y) tuple.
-		</DOC>"""		
+		</DOC>"""
 	
 		if self.group != None:
 			# If the checkbox is part of a group than checking it will uncheck
@@ -151,7 +151,7 @@ class checkbox(button):
 			if widget != None and widget.type == u'checkbox' and \
 				widget.var == self.var:
 				if widget.group != self.group and self.group != None:
-					raise form_error(_( \
+					raise osexception(_( \
 						u'All checkbox widgets without a group or within the same group should have the same variable.'))
 				if widget.checked or widget.checked == u'yes':
 					l_val.append(self.form.experiment.unistr(widget.text))
