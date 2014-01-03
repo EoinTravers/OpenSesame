@@ -56,38 +56,44 @@ class load_from_sd(item):
 		Keyword arguments:
 		script		--	A definition script. (default=None)
 		"""
+		self._runif = u'always'
 		item.__init__(self, name, experiment, script)
 
 	def run(self):
-		# Find the saved data
-		sdcard_folders = ['/sdcard/', '/mnt/sdcard/']
-		for path in sdcard_folders:
-			if os.path.isdir(path):
-				print path
-				break
-		if os.path.exists(os.path.join(path, 'datafile.txt')):
-			data_path = os.path.join(path, 'datafile.txt')
-		elif os.path.exists('datafile.txt'):
-			data_path = 'datafile.txt'
-		else:
-			self.experiment.set('data_found', False)
-			print 'No data found on sd card'
-			debug.msg('No data found on sd card')
-			return False
-		print 'Loading data from %s' % data_path
-		try:
-			f = open(data_path)
-			data_list = pickle.load(f)
-			f.close()
-			self.experiment.set('data_found', True)
-			for trial in data_list:
-				self.experiment.log_list.append(trial)
-			print 'Data loaded from sd card (%i trials)' % len(data_list)
-			debug.msg('Data loaded from sd card (%i trials)' % len(data_list))
-		except:
-			debug.msg('Error occured while loading data. Skipping...')
-		return True
-
+		# Run this now?
+		# TODO: See issue on line 80 of /plugins/send_to_server/send_to_server.py
+		if eval(self.compile_cond(self._runif)):
+			print 'Loading from sd card'
+			# Find the saved data
+			sdcard_folders = ['/sdcard/', '/mnt/sdcard/']
+			for path in sdcard_folders:
+				if os.path.isdir(path):
+					print path
+					break
+			if os.path.exists(os.path.join(path, 'datafile.txt')):
+				data_path = os.path.join(path, 'datafile.txt')
+			elif os.path.exists('datafile.txt'):
+				data_path = 'datafile.txt'
+			else:
+				print 'No data found on sd card'
+				debug.msg('No data found on sd card')
+				self.experiment.set('data_loaded', 0)
+				return False
+			print 'Loading data from %s' % data_path
+			try:
+				f = open(data_path)
+				data_list = pickle.load(f)
+				f.close()
+				self.experiment.set('data_loaded', 1)
+				for trial in data_list:
+					self.experiment.log_list.append(trial)
+				print 'Data loaded from sd card (%i trials)' % len(data_list)
+				debug.msg('Data loaded from sd card (%i trials)' % len(data_list))
+			except:
+				debug.msg('Error occured while loading data. Skipping...')
+				self.experiment.set('data_loaded', 0)
+			return True
+	
 		
 class qtload_from_sd(load_from_sd, qtautoplugin):
 	

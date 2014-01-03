@@ -6,6 +6,12 @@
 	"controls" : [
 		{
 			"type"		: "line_edit",
+			"var"		: "_runif",
+			"label"		: "Run if",
+			"tooltip"	: "Run this item only under the following conditions"
+		},
+		{
+			"type"		: "line_edit",
 			"var"		: "_address",
 			"label"		: "Server url",
 			"tooltip"	: "The URL of the server which will save the data"
@@ -30,6 +36,10 @@
 			"label"		: "Negative response:",
 			"name"		: "line_edit_no",
 			"tooltip"	: "Don't send data"
+		},
+		{
+			"type"		: "text",
+			"label"		: "If data is succesfully sent, variable [data_sent] is set to True. False otherwise."
 		}
 	]
 }

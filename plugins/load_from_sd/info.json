@@ -5,22 +5,14 @@
 	"comment"	: "Currently send all data in self.experiment.log_list to the url given. Needs to be modified to allow for sending data from any list.",
 	"controls" : [
 		{
-			"type"		: "combobox",
-			"var"		: "_mode",
-			"label"		: "Load or save data?",
-			"options"	: [
-				"Load",
-				"Save"
-			],
-			"name"		: "combobox_mode",
-			"tooltip"	: "Do you wish to load or save data from the phone's memory?"
+			"type"		: "line_edit",
+			"var"		: "_runif",
+			"label"		: "Run if",
+			"tooltip"	: "Run this item only under the following conditions"
 		},
 		{
-			"type"		: "checkbox",
-			"var"		: "_skip",
-			"label"		: "Skip if no data found",
-			"name"		: "checkbox_skip",
-			"tooltip"	: "Prevents experiment from crashing if saved data isn't found"
+			"type"		: "text",
+			"label"		: "If data is succesfully loaded, variable [data_loaded] is set to True. Otherwise, it is False"
 		}
 	]
 }

@@ -56,28 +56,35 @@ class save_to_sd(item):
 		Keyword arguments:
 		script		--	A definition script. (default=None)
 		"""
+		self._runif = u'always'
 		item.__init__(self, name, experiment, script)
 
 	def run(self):
-		sdcard_folders = ['/sdcard/', '/mnt/sdcard/']
-		for path in sdcard_folders:
-			if os.path.isdir(path):
-				break
-		try:
-			save_as = os.path.join(path, 'datafile.txt') 
-			f = open(save, 'w')
-			print 'Data saved as %s' % save_as
-		except:
-			print 'Failed to create %s' % path
-			save_as = 'datafile.txt'
-			f = open('datafile.txt', 'w')
-			print 'Data saved as %s' % os.path.join(os.curdir, save_as)
-		f.truncate()
-		#f.write( 'log_list = ' + repr(data_list)+'\n')
-		#f.write(repr(data_list)+'\n')
-		data_list = self.experiment.log_list
-		pickle.dump(data_list, f)
-		f.close()
+		# Run this now?
+		# TODO: See issue on line 80 of /plugins/send_to_server/send_to_server.py
+		print eval(self.compile_cond(self._runif))
+		if eval(self.compile_cond(self._runif)):
+			print 'Saving to sd card'
+			sdcard_folders = ['/sdcard/', '/mnt/sdcard/']
+			for path in sdcard_folders:
+				if os.path.isdir(path):
+					break
+			try:
+				save_as = os.path.join(path, 'datafile.txt') 
+				f = open(save, 'w')
+				print 'Data saved as %s' % save_as
+			except:
+				print 'Failed to create %s' % path
+				save_as = 'datafile.txt'
+				f = open('datafile.txt', 'w')
+				print 'Data saved as %s' % os.path.join(os.curdir, save_as)
+			f.truncate()
+			#f.write( 'log_list = ' + repr(data_list)+'\n')
+			#f.write(repr(data_list)+'\n')
+			data_list = self.experiment.log_list
+			pickle.dump(data_list, f)
+			f.close()
+			self.experiment.set('data_saved', 1)
 
 		
 class qtsave_to_sd(save_to_sd, qtautoplugin):
