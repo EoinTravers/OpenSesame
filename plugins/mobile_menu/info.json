@@ -32,20 +32,6 @@
 			"label"		: "Responses (one on each line):",
 			"name"		: "editor_responses",
 			"tooltip"	: "Enter response options"
-		},
-		{
-			"type"		: "line_edit",
-			"var"		: "_resp1",
-			"label"		: "Response 1:",
-			"name"		: "line_edit_resp1",
-			"tooltip"	: "Enter response option"
-		},
-		{
-			"type"		: "line_edit",
-			"var"		: "_resp2",
-			"label"		: "Response 2:",
-			"name"		: "line_edit_resp2",
-			"tooltip"	: "Enter response option"
 		}
 	]
 }
