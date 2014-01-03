@@ -18,7 +18,7 @@ along with OpenSesame.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from libopensesame.item import item
-from libopensesame import debug
+from libopensesame import debug, widgets
 from libqtopensesame.items.qtautoplugin import qtautoplugin
 from openexp.canvas import canvas
 from openexp.mouse import mouse
@@ -53,8 +53,12 @@ class send_to_server(item):
 		# work, but the variables will be undefined when they are not explicitly
 		# set in the GUI.
 		self._delete = u'yes' # yes = checked, no = unchecked
-		#self._color = u'white'
 		self._address = u''
+		# UI
+		self._question = u'Submit data now?'
+		self._yes = u'Yes'
+		self._no = u'No'
+		#self._variable = u'menu_choice'
 		# Then call the parent constructor
 		item.__init__(self, name, experiment, script)
 
@@ -64,68 +68,91 @@ class send_to_server(item):
 
 		# Call the parent constructor.
 		item.prepare(self)
-		# Here simply prepare a canvas with a fixatio dot.
-		self.c = canvas(self.experiment)
+		# User input
+		self.responses = [self._yes, self._no]
+		self.rows = [2] + [1]*len(self.responses)
 		self.m = mouse(self.experiment)
-		self.c.text('Hello world')
-		debug.msg('Prepared')
+		self.c = canvas(self.experiment)
+
 		
-	def run(self):#, custom_data = None, address = 'http://cogsci.nl/etravers/androidsql.php',  delete=False):
-		#~ if custom_data:
-			#~ data = custom_data
-		#~ else:
-			#~ data = self.experiment.log_list
-		data = self.experiment.log_list
-		self.c.clear()
-		self.c.text('Connecting to server...')
-		self.c.show()
-		
-		# Try to open the connection
-		#address = 'http://cogsci.nl/etravers/androidsql.php'
-		address = self._address
-		try:
-			page = urllib.urlopen(address)#, data='position=OpeningConnection')
-			page.close()
-			# Connection works. Send data.
-			debug.msg('Connection to server  at %s succesful...' % address)
-			t = 0
-			for trial in data:
-				progress = int(float(t)/len(data)*680)
-				#print t, len(data), progress
-				self.c.clear()
-				self.c.text('Sending...')
-				self.c.rect(300, 600, 680, 72, False, 'white')
-				self.c.rect(303, 601, progress, 70, True, 'red')
-				self.c.show()
-				encode_data = urllib.urlencode(trial)
-				debug.msg(encode_data)
-				for i in range(5):
-					# Try to send data 5 times.
-					try:
-						page = urllib.urlopen(address, encode_data)
-						page.close()
-						print 'Sent!', t
-					except IOError as e:
-							print str(e)
-					else:
-						break
-				t += 1
-			result = 'Data sent!'
+	def run(self):
+		# User input
+		form = widgets.form(self.experiment, cols=[1,5,1], rows=self.rows, margins=[32,32,32,32])
+		label_title = widgets.label(form, text=self._question)
+		form.set_widget(label_title, (0,0), colspan=3)
+		for i in range(len(self.responses)):
+			resp = self.responses[i]
+			button = widgets.button(form, text=resp)
+			form.set_widget(button, (1, i+1))
+		button_clicked = form._exec()
+		# Check input
+		if button_clicked == self._yes:
+			# Send data
+			data = self.experiment.log_list
+			self.c.clear()
+			self.c.text('Connecting to server...')
+			self.c.show()
 			
-			# Delete sent datafile
-			#~ if delete:
-				#~ if os.path.isfile(data_path):
-					#~ os.remove(data_path)
-		except IOError as e:
-			result = 'Unable to connect.\nPlease try again when connected to the internet.'
-			#save_data()
-			print str(e)
-		debug.msg(result)
-		self.c.clear()
-		self.c.text(result)
-		self.c.text('Tap to continue.', y = 500)
-		self.c.show()
-		self.m.get_click()
+			# Try to open the connection
+			#address = 'http://cogsci.nl/etravers/androidsql.php'
+			address = self._address
+			try:
+				page = urllib.urlopen(address)#, data='position=OpeningConnection')
+				page.close()
+				# Connection works. Send data.
+				debug.msg('Connection to server  at %s succesful...' % address)
+				t = 0
+				for trial in data:
+					progress = int(float(t)/len(data)*680)
+					#print t, len(data), progress
+					self.c.clear()
+					self.c.text('Sending...')
+					self.c.rect(300, 600, 680, 72, False, 'white')
+					self.c.rect(303, 601, progress, 70, True, 'red')
+					self.c.show()
+					encode_data = urllib.urlencode(trial)
+					debug.msg(encode_data)
+					for i in range(5):
+						# Try to send data 5 times.
+						try:
+							page = urllib.urlopen(address, encode_data)
+							page.close()
+							print 'Sent!', t
+						except IOError as e:
+								print str(e)
+						else:
+							break
+					t += 1
+				result = 'Data sent!'
+				
+				# Delete sent datafile
+				if delete:	
+					# Find the saved data
+					sdcard_folders = ['/sdcard/', '/mnt/sdcard/']
+					for path in sdcard_folders:
+						if os.path.isdir(path):
+							print path
+							break
+					if os.path.exists(os.path.join(path, 'datafile.txt')):
+						data_path = os.path.join(path, 'datafile.txt')
+					elif os.path.exists('datafile.txt'):
+						data_path = 'datafile.txt'
+					# Delete it
+					if os.path.isfile(data_path):
+						os.remove(data_path)
+			except IOError as e:
+				result = 'Unable to connect.\nPlease try again when connected to the internet.'
+				#save_data()
+				print str(e)
+			debug.msg(result)
+			self.c.clear()
+			self.c.text(result)
+			self.c.text('Tap to continue.', y = 500)
+			self.c.show()
+			self.m.get_click()
+		else:
+			# Don't send data
+			pass
 		
 class qtsend_to_server(send_to_server, qtautoplugin):
 	

@@ -2,7 +2,7 @@
 	"author"	: "Eoin Travers",
 	"url"		: "http://osdoc.cogsci.nl/",
 	"category"	: "Mobile",
-	"comment"	: "Currently send all data in self.experiment.log_list to the url given. Needs to be modified to allow for sending data from any list.",
+	"comment"	: "Sends the contents of self.experiment.logfile to a given address. Deletes saved data on success",
 	"controls" : [
 		{
 			"type"		: "line_edit",
@@ -11,11 +11,25 @@
 			"tooltip"	: "The URL of the server which will save the data"
 		},
 		{
-			"type"		: "checkbox",
-			"var"		: "_delete",
-			"label"		: "Delete stored data",
-			"name"		: "checkbox_widget",
-			"tooltip"	: "Delete stored data?"
+			"type"		: "line_edit",
+			"var"		: "_question",
+			"label"		: "Question:",
+			"name"		: "line_edit_question",
+			"tooltip"	: "Question to prompt user with"
+		},
+		{
+			"type"		: "line_edit",
+			"var"		: "_yes",
+			"label"		: "Positive response:",
+			"name"		: "line_edit_yes",
+			"tooltip"	: "Send data to server if this is clicked"
+		},
+		{
+			"type"		: "line_edit",
+			"var"		: "_no",
+			"label"		: "Negative response:",
+			"name"		: "line_edit_no",
+			"tooltip"	: "Don't send data"
 		}
 	]
 }
