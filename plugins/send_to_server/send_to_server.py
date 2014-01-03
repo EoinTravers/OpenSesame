@@ -53,7 +53,7 @@ class send_to_server(item):
 		# work, but the variables will be undefined when they are not explicitly
 		# set in the GUI.
 		self._runif = u'always'
-		self._address = u''
+		self._address = u'http://'
 		# UI
 		self._question = u'Submit data now?'
 		self._yes = u'Yes'
