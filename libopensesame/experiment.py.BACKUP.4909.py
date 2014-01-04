@@ -108,6 +108,16 @@ class experiment(item.item):
 		self._log = None
 		self.logfile = logfile
 
+<<<<<<< HEAD
+		# This is a dummy variable for backwards compatibility. The logfile
+		# encoding is always utf-8, and this variable doesn't do anything.
+		self.logfile_codec = u'utf-8' # DEPRECATED
+		
+		# Alternative, Pythonic logging 
+		self.log_list = []
+
+=======
+>>>>>>> 61437b7728a64a89e660f1dc0b55af5677e65dfe
 		# This is some duplication of the option parser in qtopensesame,
 		# but nevertheless keep it so we don't need qtopensesame
 		self.debug = debug.enabled
