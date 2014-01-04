@@ -107,6 +107,8 @@ class experiment(item.item):
 		# Logfile parameters
 		self._log = None
 		self.logfile = logfile
+		# Internal list for logging variables
+		self.log_list = []
 
 		# This is some duplication of the option parser in qtopensesame,
 		# but nevertheless keep it so we don't need qtopensesame
