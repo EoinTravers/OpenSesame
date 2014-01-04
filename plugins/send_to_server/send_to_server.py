@@ -135,7 +135,7 @@ class send_to_server(item):
 						t += 1
 					result = 'Data sent!'
 					self.experiment.set('data_sent', 1)
-					# Delete sent datafile
+					# Check for, and delete, sent datafile.
 					# Find the saved data
 					sdcard_folders = ['/sdcard/', '/mnt/sdcard/']
 					for path in sdcard_folders:
@@ -144,11 +144,11 @@ class send_to_server(item):
 							break
 					if os.path.exists(os.path.join(path, 'datafile.txt')):
 						data_path = os.path.join(path, 'datafile.txt')
+						os.remove(data_path)
 					elif os.path.exists('datafile.txt'):
 						data_path = 'datafile.txt'
-					# Delete it
-					if os.path.isfile(data_path):
 						os.remove(data_path)
+					# Otherwise, there's nothing to delete.
 				except IOError as e:
 					result = 'Unable to connect.\nPlease try again when connected to the internet.'
 					print str(e)
