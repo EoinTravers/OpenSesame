@@ -421,6 +421,38 @@ class experiment(item.item):
 		</DOC>"""
 
 		return os.path.exists(self.get_file(path))
+		
+	def find_on_sd_card(self, filename):
+		"""
+		Discover location of file on Android SD card, or fallback
+		gracefully to current directory on computer
+		
+		Returns:
+		Working path/to/filename
+		
+		Arguements:
+		filename : Name of file to find path for.
+		"""
+		path = self.find_sd_path()
+		if os.path.exists(os.path.join(path, filename)):
+			return os.path.join(path, filename)
+		else:
+			return None
+
+	def find_sd_path(self):
+		"""
+		Discover path for  Android SD card, or fallback
+		gracefully to current directory on computer
+		
+		Returns:
+		Path of SD card/local path to use
+		"""
+		sdcard_folders = ['/sdcard/', '/mnt/sdcard/']
+		for path in sdcard_folders:
+			if os.path.isdir(path):
+				return path
+		# Else use current dir
+		return '.'
 
 	def save(self, path, overwrite=False):
 
