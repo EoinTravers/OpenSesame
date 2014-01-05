@@ -71,7 +71,7 @@ class save_to_sd(item):
 					break
 			try:
 				save_as = os.path.join(path, 'datafile.txt') 
-				f = open(save, 'w')
+				f = open(save_as, 'w')
 				print 'Data saved as %s' % save_as
 			except:
 				print 'Failed to create %s' % path
